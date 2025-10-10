@@ -1,6 +1,7 @@
 import { Router, Request, Response, NextFunction } from "express";
 import { body, validationResult } from "express-validator";
-import User, { IUser } from "../models/user.js";
+import User from "../models/user.js";
+import type { IUser } from "../models/user.js";
 import { protect, admin } from "../middleware/authMiddleware.js";
 import generateToken from "../utils/generateToken.js";
 import { sanitizeQuery } from "../middleware/querySanitizer.js";

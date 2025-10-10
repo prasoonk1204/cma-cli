@@ -1,9 +1,14 @@
-import jwt from "jsonwebtoken";
-import { Request, Response, NextFunction } from "express";
-import User, { IUser } from "../models/user.js";
+import jwt, { JwtPayload } from "jsonwebtoken";
+import type { Request, Response, NextFunction } from "express";
+import User from "../models/user.js";
+import type { IUser } from "../models/user.js";
 
 export interface AuthenticatedRequest extends Request {
   user?: IUser;
+}
+
+interface JwtPayloadWithId extends JwtPayload {
+  id: string;
 }
 
 export const protect = async (
@@ -11,29 +16,45 @@ export const protect = async (
   res: Response,
   next: NextFunction,
 ) => {
-  let token;
+  try {
+    const authHeader = req.headers.authorization;
+    const token = authHeader?.startsWith("Bearer ")
+      ? authHeader.split(" ")[1]
+      : undefined;
 
-  if (
-    req.headers.authorization &&
-    req.headers.authorization.startsWith("Bearer")
-  ) {
-    try {
-      token = req.headers.authorization.split(" ")[1];
-      const decoded = jwt.verify(token, process.env.JWT_SECRET as string) as {
-        id: string;
-      };
-      req.user = (await User.findById(decoded.id).select("-password")) as IUser;
-      next();
-    } catch (error) {
-      console.error(error);
+    if (!token) {
       res.status(401);
-      throw new Error("Not authorized, token failed");
+      throw new Error("Not authorized, no token");
     }
-  }
 
-  if (!token) {
+    const jwtSecret = process.env.JWT_SECRET;
+    if (!jwtSecret) {
+      res.status(500);
+      throw new Error("JWT secret is not defined");
+    }
+
+    const decoded = jwt.verify(
+      token!,
+      jwtSecret,
+    ) as unknown as JwtPayloadWithId;
+
+    if (!decoded.id) {
+      res.status(401);
+      throw new Error("Invalid token payload");
+    }
+
+    const user = await User.findById(decoded.id).select("-password");
+    if (!user) {
+      res.status(404);
+      throw new Error("User not found");
+    }
+
+    req.user = user as IUser;
+    next();
+  } catch (error) {
+    console.error(error);
     res.status(401);
-    throw new Error("Not authorized, no token");
+    next(new Error("Not authorized, token failed"));
   }
 };
 
@@ -46,6 +67,6 @@ export const admin = (
     next();
   } else {
     res.status(401);
-    throw new Error("Not authorized as an admin");
+    next(new Error("Not authorized as an admin"));
   }
 };

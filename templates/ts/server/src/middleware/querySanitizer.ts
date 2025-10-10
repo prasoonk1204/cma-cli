@@ -1,5 +1,5 @@
 import { query, validationResult } from "express-validator";
-import { Request, Response, NextFunction } from "express";
+import type { Request, Response, NextFunction } from "express";
 
 export const sanitizeQuery = [
   query("page").optional().isInt({ min: 1 }).toInt(),

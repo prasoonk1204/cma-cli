@@ -1,5 +1,6 @@
 import express, { type Express } from "express";
-import cors, { CorsOptions } from "cors";
+import cors from "cors";
+import type { CorsOptions } from "cors";
 import dotenv from "dotenv";
 import helmet from "helmet";
 import compression from "compression";
@@ -26,24 +27,7 @@ const PORT = process.env.PORT ? parseInt(process.env.PORT) : 8000;
 const NODE_ENV = process.env.NODE_ENV || "development";
 
 // Security middleware
-app.use(
-  helmet({
-    contentSecurityPolicy: {
-      directives: {
-        defaultSrc: ["'self'"],
-        styleSrc: ["'self'", "'unsafe-inline'"],
-        scriptSrc: ["'self'", "'unsafe-eval'"],
-        imgSrc: ["'self'", "data:", "https:"],
-        connectSrc: ["'self'"],
-        fontSrc: ["'self'"],
-        objectSrc: ["'none'"],
-        mediaSrc: ["'self'"],
-        frameSrc: ["'none'"],
-      },
-    },
-    crossOriginEmbedderPolicy: false,
-  }),
-);
+app.use(helmet());
 app.use(compression());
 
 // Rate limiting
@@ -55,10 +39,20 @@ const limiter = rateLimit({
 app.use(limiter);
 
 // CORS configuration
+
+const allowedOrigins = process.env.CORS_ORIGIN?.split(",") || [
+  "http://localhost:5173",
+];
+
 const corsOptions: CorsOptions = {
-  origin: process.env.CORS_ORIGIN || "http://localhost:5173",
+  origin: (origin, callback) => {
+    // Allow requests with no origin (Postman, server-to-server)
+    if (!origin || allowedOrigins.includes(origin)) {
+      return callback(null, true);
+    }
+    return callback(new Error("Not allowed by CORS"));
+  },
   credentials: true,
-  optionsSuccessStatus: 200,
 };
 app.use(cors(corsOptions));
 

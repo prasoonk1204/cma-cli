@@ -1,16 +1,19 @@
 import { Router } from "express";
-import users from "./users.js";
+import users from "./userRoutes.js";
 
 const router = Router();
 
-/*
-Example:-
+// Main API routes - all routes are prefixed with /api
+// Example: POST /api/users/register
 
-import test from "./test.js";
-router.use("/test", test);
+/*
+To add new route modules:
+
+import newModule from "./newModuleRoutes.js";
+router.use("/new-module", newModule);
 */
 
-// Route modules
+// User and authentication routes
 router.use("/users", users);
 
 export default router;

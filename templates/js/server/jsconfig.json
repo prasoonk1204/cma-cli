@@ -1,29 +1,32 @@
 {
   "compilerOptions": {
-    // Environment setup & latest features
-    "lib": ["ESNext"],
     "target": "ESNext",
-    "module": "Preserve",
-    "moduleDetection": "force",
-    "jsx": "react-jsx",
+    "lib": ["ESNext"],
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
     "allowJs": true,
-
-    // Bundler mode
-    "moduleResolution": "bundler",
-    "allowImportingTsExtensions": true,
-    "verbatimModuleSyntax": true,
+    "checkJs": false,
+    "esModuleInterop": true,
+    "types": ["node", "jest"],
+    "strict": false,
     "noEmit": true,
-
-    // Best practices
-    "strict": true,
     "skipLibCheck": true,
-    "noFallthroughCasesInSwitch": true,
-    "noUncheckedIndexedAccess": true,
-    "noImplicitOverride": true,
-
-    // Some stricter flags (disabled by default)
+    "allowSyntheticDefaultImports": true,
+    "moduleDetection": "force",
+    "noUncheckedIndexedAccess": false,
+    "noFallthroughCasesInSwitch": false,
     "noUnusedLocals": false,
     "noUnusedParameters": false,
-    "noPropertyAccessFromIndexSignature": false
-  }
+    "noImplicitAny": false,
+    "noImplicitReturns": false,
+    "noImplicitThis": false
+  },
+  "include": [
+    "src/**/*",
+    "**/*.js",
+    "**/*.cjs",
+    "**/*.mjs",
+    "**/__tests__/**/*"
+  ],
+  "exclude": ["node_modules", "dist"]
 }
