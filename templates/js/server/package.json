@@ -1,37 +1,72 @@
 {
   "name": "server",
   "version": "1.0.0",
-  "main": "src/server.js",
+  "main": "src/index.js",
   "type": "module",
   "scripts": {
     "start": "node src/server.js",
     "dev": "nodemon src/server.js",
-    "test": "vitest",
-    "test:watch": "vitest --watch",
+    "test": "NODE_ENV=test NODE_OPTIONS=--experimental-vm-modules jest --runInBand",
+    "test:watch": "NODE_ENV=test NODE_OPTIONS=--experimental-vm-modules jest --watch --runInBand",
+    "test:coverage": "NODE_ENV=test NODE_OPTIONS=--experimental-vm-modules jest --coverage --runInBand",
     "lint": "eslint . --report-unused-disable-directives --max-warnings 0",
     "lint:fix": "eslint . --fix",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "clean": "rm -rf node_modules/.cache"
   },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "private": true,
   "dependencies": {
     "bcryptjs": "^3.0.2",
     "compression": "^1.8.1",
+    "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",
-    "dotenv": "^17.2.2",
+    "dotenv": "^17.2.3",
     "express": "^5.1.0",
+    "express-mongo-sanitize": "^2.2.0",
     "express-rate-limit": "^8.1.0",
     "express-validator": "^7.2.1",
     "helmet": "^8.1.0",
     "jsonwebtoken": "^9.0.2",
-    "mongoose": "^8.18.2",
-    "morgan": "^1.10.1"
+    "mailgen": "^2.0.30",
+    "mongoose": "^8.19.0",
+    "morgan": "^1.10.1",
+    "nodemailer": "^7.0.7"
   },
   "devDependencies": {
-    "eslint": "^9.36.0",
+    "@eslint/js": "^9.37.0",
+    "@types/bun": "latest",
+    "@types/jest": "^30.0.0",
+    "eslint": "^9.37.0",
+    "jest": "^30.2.0",
+    "mongodb-memory-server": "^10.2.3",
     "nodemon": "^3.1.10",
     "prettier": "^3.6.2",
     "supertest": "^7.1.4",
-    "vitest": "^3.2.4"
+    "ts-jest": "^29.4.4"
+  },
+  "jest": {
+    "testEnvironment": "node",
+    "setupFilesAfterEnv": [
+      "<rootDir>/src/__tests__/setup.js"
+    ],
+    "testMatch": [
+      "**/__tests__/**/*.test.js"
+    ],
+    "collectCoverageFrom": [
+      "src/**/*.js",
+      "!src/__tests__/**",
+      "!src/server.js"
+    ],
+    "coverageDirectory": "coverage",
+    "coverageReporters": [
+      "text",
+      "lcov",
+      "html"
+    ],
+    "transform": {}
   }
 }

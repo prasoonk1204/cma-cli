@@ -7,7 +7,6 @@
     "allowJs": true,
     "checkJs": false,
     "esModuleInterop": true,
-    "types": ["node", "jest"],
     "strict": false,
     "noEmit": true,
     "skipLibCheck": true,
